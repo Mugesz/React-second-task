@@ -4,22 +4,48 @@ import Navbar from "./navbar/Navbar";
 import Header from "./header/Header";
 import Cart from "./section/Cart";
 import Footer from "./footer/Footer";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function App() {
   const [cart, setCart] = useState([]);
   const [total, setTotal] = useState(0);
 
-  let addcartItem = (product) => {
-    setCart([...cart, product]);
-    setTotal(total + product.newPrize);
+  useEffect(() => {
+    const handleTotal = () => {
+      let price = 0;
+      cart.forEach((item) => {
+        price += Number(item.newPrize * item.quantity);
+      });
+      setTotal(price);
+    };
+
+    handleTotal();
+  }, [cart]);
+
+  const handleChange = (item, quantity) => {
+    const updatedCart = cart.map((existingItem) => {
+      if (existingItem.title === item.title) {
+        const updatedQty = existingItem.quantity + quantity;
+        return { ...existingItem, quantity: updatedQty > 0 ? updatedQty : 1 };
+      } else {
+        return existingItem;
+      }
+    });
+
+    setCart(updatedCart);
   };
 
-  let delCardItem = (product) => {
-    let itemIndex = cart.findIndex((obj) => obj.id === product.id);
-    cart.splice(itemIndex, 1);
-    setCart([...cart]);
-    setTotal(total - product.newPrize);
+  const addcartItem = (product) => {
+    const updatedTotal = total + product.newPrize * product.quantity;
+    setCart([...cart, { ...product, quantity: 1 }]);
+    setTotal(updatedTotal);
+  };
+
+  const delCardItem = (product) => {
+    const updatedTotal = total - product.newPrize * product.quantity;
+    const updatedCart = cart.filter((item) => item.title !== product.title);
+    setCart(updatedCart);
+    setTotal(updatedTotal);
   };
 
   const products = [
@@ -80,7 +106,8 @@ function App() {
     },
   ];
 
-  const isInCart = (product) => cart.some((item) => item.title === product.title);
+  const isInCart = (product) =>
+    cart.some((item) => item.title === product.title);
 
   return (
     <div className="App">
@@ -89,6 +116,7 @@ function App() {
         addcartItem={cart}
         total={total}
         delCardItem={delCardItem}
+        handleChange={handleChange}
       />
       <Header />
 

@@ -3,7 +3,7 @@ import 'bootstrap'
 import CartItem from '../cartItem/CartItem'
 
 
-function Navbar ({cartCount,addcartItem,total, delCardItem}) {
+function Navbar ({cartCount,addcartItem,total, delCardItem,handleChange}) {
 
 
     return (
@@ -26,7 +26,7 @@ function Navbar ({cartCount,addcartItem,total, delCardItem}) {
                         </li>
                     </ul>
                             
-                    <CartItem cartCount={cartCount} addcartItem={addcartItem} total={total} delCardItem={delCardItem}  />
+                    <CartItem cartCount={cartCount} addcartItem={addcartItem} total={total} delCardItem={delCardItem} handleChange={handleChange} />
                     
                 </div>
             </div>
